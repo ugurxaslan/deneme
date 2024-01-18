@@ -10,3 +10,36 @@ output:
 
 # Q2 : Proje Amacı
 Datasette yer alan  Category, Rating ve Installs sütunlarındaki veriler incelenerek, Rating değeri 4.0 ve üzeri olan ve Installs değeri 1M ve üzeri olan uygulamalar belirlenecek.Bu uygulamalar kategorilere göre guruplara ayrılacak böylece pazar payları ve oranları incelenecek. Elde edilen bilgiler doğrultusunda, pazar hakkında bilgi sahibi olup uygulamaları daha bilinçli bir şekilde seçeceğiz.
+
+# Q3 : Veri seti keşifsel analizi
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#Kütüphaleneri dahil ettim eğer localde indirmediyseniz install.packages("package.name") kullanınız.
+library(readr)
+library(dplyr)
+library(ggplot2)
+
+#googleplaystore.csv dosyasının çalışma dizinide mevcut olması gerekir.
+dosya_yolu <- "googleplaystore.csv"
+veri <- data.frame(read.csv(dosya_yolu))
+
+```
+Bu veri seti www.kaggle.com sitesinden elde edilmiştir ("https://www.kaggle.com/datasets/lava18/google-play-store-apps").Bu veriler google play store'dan toplanmış verilerdir.
+
+- Toplam uygulama sayısı : `r nrow(veri)`
+- Sütun sayısı : `r ncol(veri)`
+- Veri setinin ön görsellemesi aşağıda verilmiştir.
+
+<br>
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+veri
+```
+<br>
+
+Veri setini incelediğimizde problemimizi çözmemize yardımcı olacak sütunlar şunlardır; **Category, Installs, Rating**. Kalan sütunları sileceğim.
+
+- **Category** sütunu bize **char** tipinde gelmektedir. Bu tip bizim için uygundur. Bir değişiklik yapmamıza gerek yoktur. Bu sütunda herhangi bir NULL değeri bulunmamaktadır.
+
+- **Installs** sütunu **char** tipindedir. Aynı zamanda NA ve NaN değerlerinin temizlenmesi ve değerlerin "," ve "+" ifadelerinden kurtulması daha sonra numeric tipe çevrilmesi gerekmektedir.
+
+- **Rating** sütunu ise **double** formatındadır. Fakat NA ve NaN değerlerinden temizlenmesi ve 1-5 paun dışındaki verilerin silinmesi gerekmektdir.
+
