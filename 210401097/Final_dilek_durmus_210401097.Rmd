@@ -1,0 +1,10 @@
+---
+title: 'Proje Rapor : Dilek Durmuş 210401097'
+output:
+  html_document:
+    df_print: paged
+---
+
+# Q1 : Problem tanımı
+Şirketimiz DAppGenius , Problemimiz uygulamalarımızın beklenen indirme seviyelerinin altında kalması.
+
