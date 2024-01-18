@@ -103,4 +103,37 @@ Bu aşamada, her kategorinin toplam **install** sayısı belirlendi, ortalama **
 
 `r gruplu_veri`
 
+# Q6 : Veri analizi
+Buraya kadar analizlerimi tamamladım ve gruplara göre pazar paylarını araştırdım ve aşağıdaki pasta grafiğini elde ettim.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+temp<-gruplu_veri
+temp$Category <- ifelse(temp$Market_Share < 5, "Other",temp$Category)
+temp <- aggregate(Market_Share ~ Category, data = temp, 
+                                FUN = function(x) sum(x))
+temp<-temp[order(temp$Market_Share, decreasing = TRUE), ]
+temp$Market_Share <- temp$Market_Share / sum(temp$Market_Share) * 100
+pasta_grafigi <- pie(temp$Market_Share, labels = sprintf("%s %.1f%%", temp$Category, temp$Market_Share),cex = 0.8, col = rainbow(length(temp$Category)))
+title("Kategorilerin Pazar Payıları")
+```
+
+
+Aşağıdaki histogramda, her bir kategoride belirli bir sayıda uygulamanın bulunduğunu ve her uygulamanın kendi kategorisindeki pazar payını araştırdım. Bu pazar payı oranları, tüm pazarın genel oranına eşittir. Yani, her bir değer aşağıdaki X kategorisindeki bir uygulamanın ortalama pazar payını ifade etmektedir.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+temp <- gruplu_veri %>%
+  arrange(desc(Market_Share_per_App))
+temp <- head(temp, 10)
+par(mar = c(7, 5, 2, 2) + 0.1)  # Alt, üst, sol, sağ marjları ayarla
+barplot(height = temp$Market_Share_per_App,
+        names.arg = temp$Category,
+        main = "İlk 10 Kategorinin Uygulama Başına Pazar Payı",
+        ylab = "Pazar Payı (%)",
+        col = "pink",
+        horiz = FALSE,
+        ylim = c(0, 0.15),
+        cex.names = 0.6,
+        las = 2) 
+
+```
 
