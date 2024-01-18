@@ -43,3 +43,24 @@ Veri setini incelediğimizde problemimizi çözmemize yardımcı olacak sütunla
 
 - **Rating** sütunu ise **double** formatındadır. Fakat NA ve NaN değerlerinden temizlenmesi ve 1-5 paun dışındaki verilerin silinmesi gerekmektdir.
 
+
+# Q4 : Veri seti ön işlemesi
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#veri setimizi temizledik geçersiz ögeler silindi
+veri_temizlenmis <- na.omit(veri)
+veri_temizlenmis <- veri_temizlenmis[, c("Category", "Installs","Rating")]
+veri_temizlenmis <- subset(veri_temizlenmis, Rating >= 1 & Rating <= 5)
+veri_temizlenmis$Installs <- as.numeric(gsub("[+,]", "", veri_temizlenmis$Installs))
+
+```
+
+**Temizlenmiş Tablo**
+
+`r veri_temizlenmis`
+- 10.841 adet veri satırından temizlik sonucu 9.366 adet veri elde ettim.
+- Install sütunu "+" ve "," karakterlerinden kurtulmuş, NA ve NaN değerleri silinmiş ve ***numeric*** tipe çevrilmiştir.
+
+- Rating sütunu 1 ve 5 arası değerler kalmış gerisi silinmiş olup NA ve NaN değerleri de atılmıştır.
+
+
