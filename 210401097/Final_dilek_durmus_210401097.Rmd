@@ -1,0 +1,106 @@
+---
+title: 'Proje Rapor : Dilek Durmuş 210401097'
+output:
+  html_document:
+    df_print: paged
+---
+
+# Q1 : Problem tanımı
+Şirketimiz DAppGenius , Problemimiz uygulamalarımızın beklenen indirme seviyelerinin altında kalması.
+
+# Q2 : Proje Amacı
+Datasette yer alan  Category, Rating ve Installs sütunlarındaki veriler incelenerek, Rating değeri 4.0 ve üzeri olan ve Installs değeri 1M ve üzeri olan uygulamalar belirlenecek.Bu uygulamalar kategorilere göre guruplara ayrılacak böylece pazar payları ve oranları incelenecek. Elde edilen bilgiler doğrultusunda, pazar hakkında bilgi sahibi olup uygulamaları daha bilinçli bir şekilde seçeceğiz.
+
+# Q3 : Veri seti keşifsel analizi
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#Kütüphaleneri dahil ettim eğer localde indirmediyseniz install.packages("package.name") kullanınız.
+library(readr)
+library(dplyr)
+library(ggplot2)
+
+#googleplaystore.csv dosyasının çalışma dizinide mevcut olması gerekir.
+dosya_yolu <- "googleplaystore.csv"
+veri <- data.frame(read.csv(dosya_yolu))
+
+```
+Bu veri seti www.kaggle.com sitesinden elde edilmiştir ("https://www.kaggle.com/datasets/lava18/google-play-store-apps").Bu veriler google play store'dan toplanmış verilerdir.
+
+- Toplam uygulama sayısı : `r nrow(veri)`
+- Sütun sayısı : `r ncol(veri)`
+- Veri setinin ön görsellemesi aşağıda verilmiştir.
+
+<br>
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+veri
+```
+<br>
+
+Veri setini incelediğimizde problemimizi çözmemize yardımcı olacak sütunlar şunlardır; **Category, Installs, Rating**. Kalan sütunları sileceğim.
+
+- **Category** sütunu bize **char** tipinde gelmektedir. Bu tip bizim için uygundur. Bir değişiklik yapmamıza gerek yoktur. Bu sütunda herhangi bir NULL değeri bulunmamaktadır.
+
+- **Installs** sütunu **char** tipindedir. Aynı zamanda NA ve NaN değerlerinin temizlenmesi ve değerlerin "," ve "+" ifadelerinden kurtulması daha sonra numeric tipe çevrilmesi gerekmektedir.
+
+- **Rating** sütunu ise **double** formatındadır. Fakat NA ve NaN değerlerinden temizlenmesi ve 1-5 paun dışındaki verilerin silinmesi gerekmektdir.
+
+
+# Q4 : Veri seti ön işlemesi
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#veri setimizi temizledik geçersiz ögeler silindi
+veri_temizlenmis <- na.omit(veri)
+veri_temizlenmis <- veri_temizlenmis[, c("Category", "Installs","Rating")]
+veri_temizlenmis <- subset(veri_temizlenmis, Rating >= 1 & Rating <= 5)
+veri_temizlenmis$Installs <- as.numeric(gsub("[+,]", "", veri_temizlenmis$Installs))
+
+```
+
+**Temizlenmiş Tablo**
+
+`r veri_temizlenmis`
+- 10.841 adet veri satırından temizlik sonucu 9.366 adet veri elde ettim.
+- Install sütunu "+" ve "," karakterlerinden kurtulmuş, NA ve NaN değerleri silinmiş ve ***numeric*** tipe çevrilmiştir.
+
+- Rating sütunu 1 ve 5 arası değerler kalmış gerisi silinmiş olup NA ve NaN değerleri de atılmıştır.
+
+
+# Q5 : Veri mühendisliği 
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+veri_filtreli <- subset(veri_temizlenmis, Rating >= 4 & Rating <= 5)
+veri_filtreli <- subset(veri_filtreli, Installs > 1000000)
+veri_filtreli <- data.frame(veri_filtreli)
+
+gruplu_veri_installs <- aggregate(Installs ~ Category, data = veri_filtreli, 
+                                  FUN = function(x) c(Toplam_Indirme = sum(x)/1000000,
+                                                      Tum_Indirme_Orani = round(100 * sum(x) / sum(veri_filtreli$Installs), 2)))
+gruplu_veri_rating <- aggregate(Rating ~ Category, data = veri_filtreli, 
+                                FUN = function(x) c(Ortalama_Rating = round(mean(x),2)))
+gruplu_veri_sayilar <- aggregate(Rating ~ Category, data = veri_filtreli, FUN = length)
+colnames(gruplu_veri_sayilar)[2] <- "Count"
+gruplu_veri <- merge(gruplu_veri_installs, gruplu_veri_rating, by = "Category")
+gruplu_veri <- merge(gruplu_veri, gruplu_veri_sayilar, by = "Category")
+gruplu_veri$Market_Share<-gruplu_veri$Installs[,2]
+gruplu_veri$Installs<-gruplu_veri$Installs[,1]
+names(gruplu_veri)[names(gruplu_veri) == "Installs"] <- "Installs_Million"
+gruplu_veri$Market_Share_per_App <- round(gruplu_veri$Market_Share/gruplu_veri$Count,2)
+rm(gruplu_veri_installs,gruplu_veri_rating,gruplu_veri_sayilar,veri,dosya_yolu)
+
+
+
+```
+
+
+Şimdi ise temizlenmiş kullanılabilir verimizin içinden isteğimize uygun olan değerleri filtreleyeceğim. Installs değeri en az **1 milyon** olan ve Rating değeri en az **4.0** olan uygulamalarımızı alacağım. Bu aşamaya kadar uygulamaların isimleri önemli değil sadece kategorilerini bilmemiz yeterli.
+
+**Filtrelenmiş Tablo**
+`r veri_filtreli`
+
+
+
+Bu aşamada, her kategorinin toplam **install** sayısı belirlendi, ortalama **rating** değerleri hesaplandı ve her kategoride kaç uygulama olduğu ölçüldü. Bu veriler üzerinden her kategorinin ve kategorilere göre uygulama başına düşen pazar payı hesaplamaları yapıldı ve tabloya aktarıldı.
+
+**Gruplandırılmış tablo**
+
+`r gruplu_veri`
+
+
