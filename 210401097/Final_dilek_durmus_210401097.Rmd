@@ -1,0 +1,12 @@
+---
+title: 'Proje Rapor : Dilek Durmuş 210401097'
+output:
+  html_document:
+    df_print: paged
+---
+
+# Q1 : Problem tanımı
+Şirketimiz DAppGenius , Problemimiz uygulamalarımızın beklenen indirme seviyelerinin altında kalması.
+
+# Q2 : Proje Amacı
+Datasette yer alan  Category, Rating ve Installs sütunlarındaki veriler incelenerek, Rating değeri 4.0 ve üzeri olan ve Installs değeri 1M ve üzeri olan uygulamalar belirlenecek.Bu uygulamalar kategorilere göre guruplara ayrılacak böylece pazar payları ve oranları incelenecek. Elde edilen bilgiler doğrultusunda, pazar hakkında bilgi sahibi olup uygulamaları daha bilinçli bir şekilde seçeceğiz.
