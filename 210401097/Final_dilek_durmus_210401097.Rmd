@@ -137,3 +137,12 @@ barplot(height = temp$Market_Share_per_App,
 
 ```
 
+# Q7 : Sonuç değerlendirme, tavsiyeler
+
+---
+
+Projemizdeki temel hedef, popüler kategorilerdeki uygulamaları belirleyerek pazar stratejimizi bu yönde şekillendirmekti. Elde ettiğimiz sonuçlar istediğimiz doğrultuda, ancak veri setindeki bazı yanıltıcı durumlar göz önünde bulundurulmalıdır. Özellikle, 'Installs' sütunundaki verilerin dağılım aralıkları oldukça geniştir, 1.000.000'den 1.000.000.000'e kadar uzanmaktadır. Bu durum, kesin verilere ulaşmayı zorlaştırabilir ve skaladaki geniş aralıklar nedeniyle yanıltıcı sonuçlara yol açabilir. Ancak, projemde sayısal değerlerden ziyade oranlar üzerinden çalıştığım için bu olası yanılgıyı azalttım. Veri setimizdeki dağılım aralıklarını azaltarak veya doğrudan sayılar kullanarak daha sağlıklı sonuçlar elde edebiliriz.
+
+Sonuç olarak, projemizden elde ettiğimiz verilere dayanarak, uygulama kategorilerinin pazar payı oranlarına odaklanarak en iyi performans gösteren kategorileri belirledik. Bu kategoriler sırasıyla şunlardır: Game (22.11), Communication (20.76), Social (8.87) ve Productivity (8.84). Ayrıca, her bir uygulama kategorisinin başına düşen pazar payı oranlarına bakarak en etkili kategorileri belirledik: Communication (0.13), Social (0.08), Productivity (0.07) ve Travel/Local (0.06).
+
+Bu sonuçlara dayanarak, pazar payımızı genişletmek için daha iyi uygulamaları seçerek stratejimizi güçlendireceğiz.
